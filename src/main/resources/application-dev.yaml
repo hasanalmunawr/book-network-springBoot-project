@@ -6,28 +6,40 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create  # Adjust as needed (update, create, create-drop, etc.)
     show-sql: false
     properties:
       hibernate:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+#  mail:
+#    host: localhost
+#    port: 1025
+#    username: hasan
+#    password: hasan
+#    properties:
+#      mail:
+#        smtp:
+#          trust: "*"
+#        auth: true
+#        starttls:
+#          enable: true
+#        connectiontimeout: 5000
+#        timeout: 3000
+#        writetimeout: 5000
+
   mail:
-    host: localhost
-    port: 1025
-    username: hasan
-    password: hasan
+    host: smtp.gmail.com
+    port: 587
+    username: hasanalmunawar01@gmail.com
+    password: vhpmeizmdpvpiclz
     properties:
       mail:
         smtp:
-          trust: "*"
-        auth: true
-        starttls:
-          enable: true
-        connectiontimeout: 5000
-        timeout: 3000
-        writetimeout: 5000
+          auth: true
+          starttls:
+            enable: true
 
 application:
   security:
@@ -39,4 +51,6 @@ application:
   mailing:
     frontend:
       activation-url: http://localhost:4200/activate-account
+
+
 

@@ -4,7 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.CharEncoding;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -12,42 +12,48 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender javaMailSender;
+    private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+
+    @Value("${spring.mail.username}")
+    private String senderEmail;
 
     @Async
     public void sendEmail(
             String to,
             String username,
-            EmailTemplateName emailTemplateName,
+            EmailTemplateName emailTemplate,
             String confirmationUrl,
             String activationCode,
-            String subject) throws MessagingException {
+            String subject
+    ) throws MessagingException {
         String templateName;
-
-        if (emailTemplateName == null) {
+        if (emailTemplate == null) {
             templateName = "confirm-email";
         } else {
-            templateName = emailTemplateName.name();
+            templateName = emailTemplate.getName();
         }
 
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        log.info("[EmailService:sendEmail] The Template Name is {}", templateName );
+        log.info("[EmailService:sendEmail] The Template Should be  {}", emailTemplate.getName() );
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(
                 mimeMessage,
-                MimeMessageHelper.MULTIPART_MODE_MIXED,
-                StandardCharsets.UTF_8.name()
+                MULTIPART_MODE_MIXED,
+                UTF_8.name()
         );
-
         Map<String, Object> properties = new HashMap<>();
         properties.put("username", username);
         properties.put("confirmationUrl", confirmationUrl);
@@ -56,7 +62,7 @@ public class EmailService {
         Context context = new Context();
         context.setVariables(properties);
 
-        helper.setFrom("hasanalmunawar9@gmail.com");
+        helper.setFrom(senderEmail);
         helper.setTo(to);
         helper.setSubject(subject);
 
@@ -64,8 +70,8 @@ public class EmailService {
 
         helper.setText(template, true);
 
-        javaMailSender.send(mimeMessage);
-
+        mailSender.send(mimeMessage);
     }
+
 
 }
