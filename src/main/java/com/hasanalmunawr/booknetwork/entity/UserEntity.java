@@ -1,5 +1,6 @@
 package com.hasanalmunawr.booknetwork.entity;
 
+import com.hasanalmunawr.booknetwork.history.BookTransactionHistory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -49,6 +50,9 @@ public class UserEntity implements UserDetails, Principal {
 
     @OneToMany(mappedBy = "owner")
     private List<BookEntity> books;
+
+    @OneToMany(mappedBy = "user")
+    private List<BookTransactionHistory> bookTransactionHistories;
 
 
     @CreatedDate

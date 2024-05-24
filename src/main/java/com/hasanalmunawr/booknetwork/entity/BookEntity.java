@@ -2,6 +2,7 @@ package com.hasanalmunawr.booknetwork.entity;
 
 import com.hasanalmunawr.booknetwork.books.FeedbackEntity;
 import com.hasanalmunawr.booknetwork.common.BaseEntity;
+import com.hasanalmunawr.booknetwork.history.BookTransactionHistory;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -34,4 +35,7 @@ public class BookEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "book")
     private List<FeedbackEntity> feedbacks;
+
+    @OneToMany(mappedBy = "book")
+    private List<BookTransactionHistory> bookTransactionHistories;
 }
