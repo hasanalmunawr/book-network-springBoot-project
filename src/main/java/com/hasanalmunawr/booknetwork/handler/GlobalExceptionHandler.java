@@ -3,7 +3,6 @@ package com.hasanalmunawr.booknetwork.handler;
 import com.hasanalmunawr.booknetwork.exception.ActivationTokenException;
 import com.hasanalmunawr.booknetwork.exception.OperationNotPermittedException;
 import jakarta.mail.MessagingException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static com.hasanalmunawr.booknetwork.handler.BusinessErrorCodes.*;
