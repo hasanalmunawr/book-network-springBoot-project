@@ -1,14 +1,17 @@
 package com.hasanalmunawr.booknetwork.entity;
 
+import com.hasanalmunawr.booknetwork.books.FeedbackEntity;
 import com.hasanalmunawr.booknetwork.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -28,4 +31,7 @@ public class BookEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
+
+    @OneToMany(mappedBy = "book")
+    private List<FeedbackEntity> feedbacks;
 }
