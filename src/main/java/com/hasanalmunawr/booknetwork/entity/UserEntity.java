@@ -99,4 +99,5 @@ public class UserEntity implements UserDetails, Principal {
     public String getFullName() {
         return firstName+ " "+lastName;
     }
+
 }

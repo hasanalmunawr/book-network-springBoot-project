@@ -1,4 +1,4 @@
-package com.hasanalmunawr.booknetwork.books;
+package com.hasanalmunawr.booknetwork.feedbacks;
 
 import com.hasanalmunawr.booknetwork.common.BaseEntity;
 import com.hasanalmunawr.booknetwork.entity.BookEntity;
