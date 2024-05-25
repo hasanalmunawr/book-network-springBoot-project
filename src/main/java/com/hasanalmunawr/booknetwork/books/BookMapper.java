@@ -1,6 +1,9 @@
 package com.hasanalmunawr.booknetwork.books;
 
 import com.hasanalmunawr.booknetwork.entity.BookEntity;
+import com.hasanalmunawr.booknetwork.history.BookTransactionHistory;
+import com.hasanalmunawr.booknetwork.history.BorrowedBookResponse;
+import com.hasanalmunawr.booknetwork.utils.FIleUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +32,19 @@ public class BookMapper {
                 .archived(book.isArchived())
                 .shareable(book.isShareable())
                 .owner(book.getOwner().getFullName())
-//                .cover(FileUtils.readFileFromLocation(book.getBookCover()))
+                .cover(FIleUtils.readFileFromLocation(book.getBookCover()))
+                .build();
+    }
+
+    public BorrowedBookResponse toBorrowedBookResponse(BookTransactionHistory history) {
+        return BorrowedBookResponse.builder()
+                .id(history.getBook().getId())
+                .title(history.getBook().getTitle())
+                .authorName(history.getBook().getAuthorName())
+                .isbn(history.getBook().getIsbn())
+                .rate(history.getBook().getRate())
+                .returned(history.isReturned())
+                .returnApproved(history.isReturnApproved())
                 .build();
     }
 }

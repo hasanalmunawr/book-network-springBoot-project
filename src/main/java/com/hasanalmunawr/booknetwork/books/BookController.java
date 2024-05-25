@@ -1,6 +1,7 @@
 package com.hasanalmunawr.booknetwork.books;
 
 import com.hasanalmunawr.booknetwork.dto.PageResponse;
+import com.hasanalmunawr.booknetwork.history.BorrowedBookResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -26,7 +27,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.saveBook(request, currentUser));
     }
 
-    @GetMapping("{book-id}")
+    @GetMapping("/{book-id}")
     public ResponseEntity<BookResponse> findById(
             @RequestParam("book-id") Integer bookId
     ) {
@@ -42,7 +43,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.findAllBooks(page, size, currentUser));
     }
 
-    @GetMapping("owner")
+    @GetMapping("/owner")
     public ResponseEntity<PageResponse<BookResponse>> findAllBooksByOwner(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -50,5 +51,15 @@ public class BookController {
     ) {
         return ResponseEntity.ok(bookService.findAllBooksByOwner(page, size, currentUser));
     }
+
+    @GetMapping("/borrowed")
+    public ResponseEntity<PageResponse<BorrowedBookResponse>> findAllBorrowsBooks(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+            Authentication currentUser
+    ) {
+        return ResponseEntity.ok(bookService.findAllBorrowsBooks(page, size, currentUser));
+    }
+
 
 }

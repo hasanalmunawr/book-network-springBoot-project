@@ -29,4 +29,8 @@ public class BookTransactionHistory extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "book_id")
     private BookEntity book;
+
+    public boolean isReturnApproved() {
+        return this.returnedApproved;
+    }
 }
