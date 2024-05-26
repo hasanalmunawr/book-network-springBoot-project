@@ -2,7 +2,7 @@ package com.hasanalmunawr.booknetwork.exception;
 
 public class OperationNotPermittedException extends RuntimeException{
 
-    OperationNotPermittedException(String message) {
+    public OperationNotPermittedException(String message) {
         super(message);
     }
 

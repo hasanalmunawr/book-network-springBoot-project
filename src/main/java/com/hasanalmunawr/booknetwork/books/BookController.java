@@ -53,13 +53,42 @@ public class BookController {
     }
 
     @GetMapping("/borrowed")
-    public ResponseEntity<PageResponse<BorrowedBookResponse>> findAllBorrowsBooks(
+    public ResponseEntity<PageResponse<BorrowedBookResponse>> findAllBorrowedBooks(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
             Authentication currentUser
     ) {
-        return ResponseEntity.ok(bookService.findAllBorrowsBooks(page, size, currentUser));
+        return ResponseEntity.ok(bookService.findAllBorrowedBooks(page, size, currentUser));
     }
+
+@GetMapping("/returned")
+    public ResponseEntity<PageResponse<BorrowedBookResponse>> findAllReturnedBooks(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+            Authentication currentUser
+    ) {
+        return ResponseEntity.ok(bookService.findAllReturnedBooks(page, size, currentUser));
+    }
+
+
+//    it has not finished yet!!!!
+    @PutMapping("/{book-id}")
+    public ResponseEntity<?> updateShareableStatus(
+            @RequestParam(name = "book-id") Integer bookId,
+            Authentication currentUser
+    ) {
+        return ResponseEntity.ok(bookService.updateShareableStatus(bookId, currentUser));
+    }
+
+
+ @PutMapping("/{book-id}")
+    public ResponseEntity<?> updateArchivedStatus(
+            @RequestParam(name = "book-id") Integer bookId,
+            Authentication currentUser
+    ) {
+        return ResponseEntity.ok(bookService.updateArchivedStatus(bookId, currentUser));
+    }
+
 
 
 }
