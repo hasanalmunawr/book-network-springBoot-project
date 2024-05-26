@@ -6,6 +6,7 @@ import com.hasanalmunawr.booknetwork.entity.BookEntity;
 import com.hasanalmunawr.booknetwork.entity.UserEntity;
 import com.hasanalmunawr.booknetwork.exception.EntityNotFoundException;
 import com.hasanalmunawr.booknetwork.exception.OperationNotPermittedException;
+import com.hasanalmunawr.booknetwork.file.FileStoreService;
 import com.hasanalmunawr.booknetwork.history.BookTransactionHistory;
 import com.hasanalmunawr.booknetwork.repository.BookTransactionHistoryRepository;
 import com.hasanalmunawr.booknetwork.history.BorrowedBookResponse;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +34,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookTransactionHistoryRepository historyRepository;
+    private final FileStoreService fileStoreService;
 
     public Integer saveBook(BookRequest request, Authentication currentUser) {
         UserEntity user = (UserEntity) currentUser.getPrincipal();
@@ -184,6 +187,54 @@ public class BookService {
                 .build();
 
         return historyRepository.save(bookTransactionHistory).getId();
+    }
+
+    public Integer returnBorrowedBook(Integer bookId, Authentication currentUser) {
+        BookEntity bookEntity = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("No Book Found By Id : " + bookId));
+
+        if (bookEntity.isArchived() || !bookEntity.isShareable()) {
+            throw new OperationNotPermittedException("The requested book is archived or not shareable");
+        }
+
+        UserEntity user = (UserEntity) currentUser.getPrincipal();
+
+        if (Objects.equals(bookEntity.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot borrow or return your own book");
+        }
+
+        BookTransactionHistory bookTransactionHistory = historyRepository.findByBookIdAndUserId(bookId, user.getId())
+                .orElseThrow(() -> new OperationNotPermittedException("You did not borrow this book"));
+
+        bookTransactionHistory.setReturned(true);
+        return historyRepository.save(bookTransactionHistory).getId();
+    }
+
+    public Integer approveReturnBorrowedBook(Integer bookId, Authentication connectedUser) {
+        BookEntity book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("No book found with ID:: " + bookId));
+        if (book.isArchived() || !book.isShareable()) {
+            throw new OperationNotPermittedException("The requested book is archived or not shareable");
+        }
+        UserEntity user = ((UserEntity) connectedUser.getPrincipal());
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot approve the return of a book you do not own");
+        }
+
+        BookTransactionHistory bookTransactionHistory = historyRepository.findByBookIdAndOwnerId(bookId, user.getId())
+                .orElseThrow(() -> new OperationNotPermittedException("The book is not returned yet. You cannot approve its return"));
+
+        bookTransactionHistory.setReturnedApproved(true);
+        return historyRepository.save(bookTransactionHistory).getId();
+    }
+
+    public void uploadBookCoverPicture(MultipartFile file, Authentication connectedUser, Integer bookId) {
+        BookEntity book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("No book found with ID:: " + bookId));
+        UserEntity user = ((UserEntity) connectedUser.getPrincipal());
+        String profilePicture = fileStoreService.saveFile(file, bookId, user.getId());
+        book.setBookCover(profilePicture);
+        bookRepository.save(book);
     }
 
 
